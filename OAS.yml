@@ -1,0 +1,95 @@
+openapi: 3.0.3
+info:
+  title: STD24193
+  version: "1.0.0"
+  description: "This is a specification of STD24193"
+servers:
+  - url: http://localhost:8000
+paths:
+  /cars:
+    post:
+      summary: Créer une voiture et l’ajouter à la liste en mémoire
+      tags: [Cars]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarCreate'
+      responses:
+        '201':
+          description: Voiture créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+
+    get:
+      summary: Récupérer la liste de voitures en mémoire
+      tags: [Cars]
+      responses:
+        '200':
+          description: Liste des voitures
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Car'
+  /cars/{id}:
+    get:
+      summary: Obtenir une voiture par identifiant
+      tags: [Cars]
+      parameters:
+        - $ref: '#/components/parameters/CarId'
+      responses:
+        '200':
+          description: Voiture trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+components:
+  parameters:
+    CarId:
+      name: id
+      in: path
+      required: true
+      description: Identifiant (chaîne) de la voiture
+      schema:
+        type: string
+  schemas:
+    Car:
+      type: object
+      required: [identifier, brand, model, characteristics]
+      properties:
+        identifier:
+          type: string
+          description: Identifiant unique de la voiture
+          example: "car_001"
+        brand:
+          type: string
+          example: "Toyota"
+        model:
+          type: string
+          example: "Corolla"
+        characteristics:
+          $ref: '#/components/schemas/Characteristic'
+
+    CarCreate:
+      allOf:
+        - $ref: '#/components/schemas/Car'
+
+    Characteristic:
+      type: object
+      required: [max_speed, max_fuel_capacity]
+      properties:
+        max_speed:
+          type: number
+          format: float
+          example: 220
+        max_fuel_capacity:
+          type: number
+          format: float
+          example: 50
+
